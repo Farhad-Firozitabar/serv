@@ -1,0 +1,102 @@
+/// Prisma schema describing CafePOS core data models and relationships.
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+  id               String        @id @default(cuid())
+  name             String
+  email            String        @unique
+  passwordHash     String
+  role             UserRole      @default(user)
+  subscriptionTier SubscriptionTier @default(BASIC)
+  createdAt        DateTime      @default(now())
+  sales            Sale[]
+  printers         Printer[]
+}
+
+model Product {
+  id       String   @id @default(cuid())
+  name     String
+  price    Decimal  @db.Decimal(10, 2)
+  stock    Int      @default(0)
+  category String
+  saleItems SaleItem[]
+  logs     InventoryLog[]
+}
+
+model Sale {
+  id        String    @id @default(cuid())
+  userId    String
+  total     Decimal   @db.Decimal(10, 2)
+  createdAt DateTime  @default(now())
+  user      User      @relation(fields: [userId], references: [id])
+  items     SaleItem[]
+}
+
+model SaleItem {
+  id        String   @id @default(cuid())
+  saleId    String
+  productId String
+  qty       Int
+  price     Decimal  @db.Decimal(10, 2)
+  sale      Sale     @relation(fields: [saleId], references: [id])
+  product   Product  @relation(fields: [productId], references: [id])
+}
+
+model InventoryLog {
+  id        String   @id @default(cuid())
+  productId String
+  change    Int
+  reason    String
+  createdAt DateTime @default(now())
+  product   Product  @relation(fields: [productId], references: [id])
+}
+
+model Customer {
+  id        String   @id @default(cuid())
+  name      String
+  phone     String?
+  points    Int      @default(0)
+  createdAt DateTime @default(now())
+}
+
+model Printer {
+  id        String   @id @default(cuid())
+  name      String
+  address   String
+  userId    String
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id])
+  jobs      PrintJob[]
+}
+
+model PrintJob {
+  id        String   @id @default(cuid())
+  printerId String
+  fileUrl   String
+  status    PrintStatus @default(PENDING)
+  createdAt DateTime @default(now())
+  printer   Printer  @relation(fields: [printerId], references: [id])
+}
+
+enum SubscriptionTier {
+  BASIC
+  PROFESSIONAL
+}
+
+enum UserRole {
+  admin
+  user
+}
+
+enum PrintStatus {
+  PENDING
+  SENT
+  FAILED
+}
