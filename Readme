@@ -1,0 +1,61 @@
+# ☕ CafePOS — Modern Cafe Management System
+
+CafePOS is a modern, web-based point-of-sale and management system for cafés, built with **Next.js 14 (App Router)**, **TypeScript**, **Prisma ORM**, and **PostgreSQL**.  
+It includes full **Admin control**, **subscription tiers (Basic / Professional)**, and built-in **printing**, **inventory**, **sales**, **accounting**, and **reporting** modules.
+
+---
+
+## 🚀 Features
+
+### 👩‍💼 Admin Panel
+- Manage all registered café users  
+- Assign or change subscription plans (`Basic` or `Professional`)  
+- Deactivate users  
+- View system stats  
+
+### 🧾 Basic Plan
+- Sales management and invoice generation  
+- Simple inventory (in/out stock updates)  
+- Basic financial reports (daily / weekly / monthly)  
+- One connected receipt printer (browser print)  
+
+### 💼 Professional Plan
+- Includes all Basic features  
+- Advanced inventory (low-stock alerts, expiration, reorder level)  
+- Full accounting (ledger, balance sheet, profit/loss, expenses)  
+- Customer loyalty (points, discounts, auto rewards)  
+- Analytical charts (top products, busy hours)  
+- Automatic daily backup  
+- Server-side printing (IPP protocol)  
+- Email support  
+
+---
+
+## 🖨️ Printing System
+
+| Plan | Type | Description |
+|------|------|--------------|
+| Basic | Browser print | Uses `window.print()` for local printing |
+| Professional | Server-side | Sends PDF via IPP (Internet Printing Protocol) to a configured printer |
+
+**PDF invoices** are generated using `puppeteer` or `pdf-lib` and stored in `/public/invoices/`.
+
+---
+
+## 🧠 Tech Stack
+
+| Layer | Technology |
+|-------|-------------|
+| Frontend | Next.js 14 (App Router) + TypeScript |
+| ORM | Prisma |
+| Database | PostgreSQL |
+| Styling | Tailwind CSS + shadcn/ui |
+| Charts | Recharts |
+| Auth | NextAuth or JWT |
+| PDF | puppeteer / pdf-lib |
+| Printing | IPP (Internet Printing Protocol) |
+
+---
+
+## 📁 Folder Structure
+
