@@ -1,6 +1,6 @@
-# ☕ CafePOS — Modern Cafe Management System
+# ☕ سرو (Sarv) — Modern Cafe Management System
 
-CafePOS is a modern, web-based point-of-sale and management system for cafés, built with **Next.js 14 (App Router)**, **TypeScript**, **Prisma ORM**, and **PostgreSQL**.  
+سرو یک سامانه مدرن و تحت‌وب برای مدیریت کافه است که با **Next.js 14 (App Router)**، **TypeScript**، **Prisma ORM** و **PostgreSQL** ساخته شده است.  
 It includes full **Admin control**, **subscription tiers (Basic / Professional)**, and built-in **printing**, **inventory**, **sales**, **accounting**, and **reporting** modules.
 
 ---
@@ -58,4 +58,3 @@ It includes full **Admin control**, **subscription tiers (Basic / Professional)*
 ---
 
 ## 📁 Folder Structure
-

@@ -1,7 +1,7 @@
 import { PrismaClient } from "@prisma/client";
 
 /**
- * Singleton Prisma client instance reused across the CafePOS server runtime.
+ * Singleton Prisma client instance reused across the سرو server runtime.
  */
 const globalForPrisma = globalThis as unknown as { prisma: PrismaClient | undefined };
 

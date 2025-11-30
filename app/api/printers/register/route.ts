@@ -15,7 +15,7 @@ export async function POST(request: Request) {
 
   const existingCount = await prisma.printer.count({ where: { userId: session.userId } });
   if (session.subscriptionTier === "BASIC" && existingCount >= 1) {
-    return NextResponse.json({ error: "Basic plan allows only one printer" }, { status: 400 });
+    return NextResponse.json({ error: "طرح پایه فقط اجازه ثبت یک پرینتر را می‌دهد." }, { status: 400 });
   }
 
   const printer = await prisma.printer.create({

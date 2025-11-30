@@ -4,7 +4,7 @@ import { sendToPrinter } from "@/lib/printer";
 import { requirePlan } from "@/lib/subscription";
 
 /**
- * API route queuing a print job for a registered CafePOS printer.
+ * API route queuing a print job for یک پرینتر ثبت‌شده در سرو.
  */
 export async function POST(request: Request) {
   const { authorized, session, reason } = await requirePlan("PROFESSIONAL");
@@ -16,7 +16,7 @@ export async function POST(request: Request) {
 
   const printer = await prisma.printer.findUnique({ where: { id: printerId } });
   if (!printer || printer.userId !== session.userId) {
-    return NextResponse.json({ error: "Printer not found" }, { status: 404 });
+    return NextResponse.json({ error: "پرینتر موردنظر یافت نشد." }, { status: 404 });
   }
 
   const job = await prisma.printJob.create({

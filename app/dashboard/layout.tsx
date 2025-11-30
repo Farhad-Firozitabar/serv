@@ -1,34 +1,47 @@
 import { ReactNode } from "react";
-import Link from "next/link";
+import { getSession } from "@/lib/auth";
+import { redirect } from "next/navigation";
+import LogoutButton from "@/components/ui/LogoutButton";
+import SidebarNav from "@/components/dashboard/SidebarNav";
 
 /**
  * Dashboard layout providing navigation and shared structure across modules.
  */
-const links = [
-  { href: "/dashboard/sales", label: "Sales" },
-  { href: "/dashboard/inventory", label: "Inventory" },
-  { href: "/dashboard/accounting", label: "Accounting" },
-  { href: "/dashboard/customers", label: "Customers" },
-  { href: "/dashboard/reports", label: "Reports" },
-  { href: "/dashboard/printers", label: "Printers" },
-  { href: "/dashboard/settings", label: "Settings" },
-  { href: "/dashboard/admin", label: "Admin" }
+const userLinks = [
+  { href: "/dashboard/sales", label: "فروش" },
+  { href: "/dashboard/menu", label: "منو" },
+  { href: "/dashboard/inventory", label: "موجودی" },
+  { href: "/dashboard/accounting", label: "حسابداری" },
+  { href: "/dashboard/reports", label: "گزارش‌ها" },
+  { href: "/dashboard/settings", label: "تنظیمات" }
 ];
 
-export default function DashboardLayout({ children }: { children: ReactNode }) {
+const adminLinks = [
+  { href: "/dashboard/admin", label: "مدیریت" }
+];
+
+export default async function DashboardLayout({ children }: { children: ReactNode }) {
+  const session = await getSession();
+  if (!session) {
+    redirect("/login");
+  }
+
+  const isAdmin = session.role === "admin";
+  const links = isAdmin ? adminLinks : userLinks;
+
   return (
-    <div className="grid min-h-screen grid-cols-[240px_1fr] bg-white text-slate-900 dark:bg-slate-900 dark:text-slate-100">
-      <aside className="flex flex-col gap-3 border-r border-slate-200 bg-slate-100 p-6 dark:border-slate-800 dark:bg-slate-950">
-        <h2 className="text-xl font-semibold text-brand">CafePOS</h2>
-        <nav className="flex flex-col gap-2">
-          {links.map((link) => (
-            <Link key={link.href} className="text-sm font-medium text-slate-700 hover:text-brand dark:text-slate-300" href={link.href}>
-              {link.label}
-            </Link>
-          ))}
-        </nav>
+    <div className="grid min-h-screen grid-cols-[260px_1fr] bg-emerald-50/70 text-slate-900 dark:bg-slate-950">
+      <aside className="flex flex-col gap-6 border-l border-emerald-200 bg-gradient-to-b from-emerald-900 to-emerald-800 p-6 text-white shadow-2xl">
+        <div>
+          <h2 className="text-2xl font-black">سرو</h2>
+          <p className="mt-1 text-sm text-emerald-100">داشبورد جامع مدیریت کافه</p>
+        </div>
+        <SidebarNav links={links} />
+        <div className="mt-auto pt-4 border-t border-emerald-700">
+          <LogoutButton />
+        </div>
       </aside>
-      <main className="p-8">{children}</main>
+      <main className="bg-white/90 p-8 shadow-inner shadow-emerald-100">{children}</main>
     </div>
   );
 }

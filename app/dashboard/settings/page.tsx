@@ -1,29 +1,25 @@
 import { requirePlan } from "@/lib/subscription";
+import { requireUser } from "@/lib/auth";
+import ProfileForm from "@/components/settings/ProfileForm";
 
 /**
  * Settings dashboard for updating cafe profile and notification preferences.
  */
 export default async function SettingsPage() {
+  await requireUser(); // Redirect admin users to admin panel
   const { authorized, session, reason } = await requirePlan(["BASIC", "PROFESSIONAL"]);
   if (!authorized || !session) {
-    return <p className="text-red-500">Access denied: {reason}</p>;
+    return <p className="rounded-2xl border border-red-200 bg-red-50/80 p-4 text-sm text-red-700">دسترسی نامعتبر: {reason}</p>;
   }
 
   return (
-    <section className="space-y-6">
-      <header>
-        <h1 className="text-3xl font-semibold">Settings</h1>
-        <p className="text-sm text-slate-500">Configure cafe profile details, printer defaults, and notifications.</p>
+    <section className="space-y-6 text-right">
+      <header className="space-y-2">
+        <h1 className="text-3xl font-bold text-slate-900">تنظیمات سرو</h1>
+        <p className="text-sm text-slate-500">اطلاعات کافه، پرینتر پیش‌فرض و هشدارهای سیستمی را از این بخش تنظیم کنید.</p>
       </header>
-      <div className="grid gap-4 md:grid-cols-2">
-        <div className="rounded border border-slate-200 p-4">
-          <h2 className="text-lg font-medium">Cafe profile</h2>
-          <p className="text-sm text-slate-500">Update address, hours, and contact information.</p>
-        </div>
-        <div className="rounded border border-slate-200 p-4">
-          <h2 className="text-lg font-medium">Notifications</h2>
-          <p className="text-sm text-slate-500">Control low stock alerts and accounting reminders.</p>
-        </div>
+      <div className="grid gap-4">
+        <ProfileForm />
       </div>
     </section>
   );

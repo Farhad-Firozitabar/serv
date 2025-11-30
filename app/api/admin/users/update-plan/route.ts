@@ -8,7 +8,7 @@ import { getSession } from "@/lib/auth";
 export async function POST(request: Request) {
   const session = await getSession();
   if (!session || session.role !== "admin") {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    return NextResponse.json({ error: "دسترسی غیرمجاز" }, { status: 401 });
   }
 
   const { userId, subscriptionTier } = (await request.json()) as {
@@ -17,7 +17,7 @@ export async function POST(request: Request) {
   };
 
   if (!userId || !["BASIC", "PROFESSIONAL"].includes(subscriptionTier)) {
-    return NextResponse.json({ error: "Invalid request" }, { status: 400 });
+    return NextResponse.json({ error: "درخواست نامعتبر است" }, { status: 400 });
   }
 
   const updated = await prisma.user.update({

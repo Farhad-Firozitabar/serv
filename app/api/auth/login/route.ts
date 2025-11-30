@@ -2,30 +2,31 @@ import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
 import { prisma } from "@/lib/prisma";
-import { authenticate } from "@/lib/auth";
 
 /**
- * API route handling CafePOS credential-based login and issuing JWT session cookies.
+ * API route handling سرو credential-based login and issuing JWT session cookies.
  */
 export async function POST(request: Request) {
-  const { email, password } = (await request.json()) as { email: string; password: string };
-  const user = await prisma.user.findUnique({ where: { email } });
+  const { phone, password } = (await request.json()) as { phone: string; password: string };
+  const user = await prisma.user.findUnique({ where: { phone } });
   if (!user) {
-    return NextResponse.json({ error: "Invalid credentials" }, { status: 401 });
+    return NextResponse.json({ error: "شماره تلفن یا رمز عبور نادرست است." }, { status: 401 });
   }
 
   const valid = await bcrypt.compare(password, user.passwordHash);
   if (!valid) {
-    return NextResponse.json({ error: "Invalid credentials" }, { status: 401 });
+    return NextResponse.json({ error: "شماره تلفن یا رمز عبور نادرست است." }, { status: 401 });
   }
 
-  const token = await authenticate(email, user.passwordHash);
-  if (!token) {
-    return NextResponse.json({ error: "Authentication failed" }, { status: 401 });
+  if (!user.active && user.role !== "admin") {
+    return NextResponse.json({ error: "حساب شما هنوز فعال نشده است. لطفاً منتظر تایید مدیر باشید." }, { status: 403 });
   }
+
+  const { createSession } = await import("@/lib/auth");
+  const token = createSession(user.id, user.role, user.subscriptionTier);
 
   const cookieStore = cookies();
-  cookieStore.set("cafepos-token", token, {
+  cookieStore.set("sarv-session", token, {
     httpOnly: true,
     sameSite: "lax",
     path: "/"
