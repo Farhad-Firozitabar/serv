@@ -1,10 +1,12 @@
 import dynamic from "next/dynamic";
 import { startOfMonth, subMonths } from "date-fns";
-import type { Sale } from "@prisma/client";
+import type { Prisma } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
 import { requirePlan } from "@/lib/subscription";
 import { requireUser } from "@/lib/auth";
 import type { MonthlySalesPoint } from "@/types/reports";
+
+type Sale = Prisma.SaleGetPayload<{}>;
 
 const MONTHS_TO_DISPLAY = 12;
 const numberFormatter = new Intl.NumberFormat("fa-IR", { maximumFractionDigits: 0 });

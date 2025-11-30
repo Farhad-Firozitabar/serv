@@ -1,7 +1,10 @@
 "use client";
 
 import Button from "@/components/ui/Button";
-import type { Printer, PrintJob } from "@prisma/client";
+import type { Prisma } from "@prisma/client";
+
+type Printer = Prisma.PrinterGetPayload<{}>;
+type PrintJob = Prisma.PrintJobGetPayload<{}>;
 
 /**
  * Card component summarising a printer and its latest job status.

@@ -1,12 +1,9 @@
 /**
  * @type {import('next').NextConfig}
- * Root Next.js configuration enabling strict mode and experimental App Router options.
+ * Root Next.js configuration enabling strict mode.
  */
 const nextConfig = {
-  reactStrictMode: true,
-  experimental: {
-    serverActions: true
-  }
+  reactStrictMode: true
 };
 
 export default nextConfig;
