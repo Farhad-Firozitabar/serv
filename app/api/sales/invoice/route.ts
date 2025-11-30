@@ -39,6 +39,10 @@ export async function GET(request: Request) {
     select: { name: true }
   });
 
+  const subtotal = sale.items.reduce((sum, item) => sum + Number(item.price) * item.qty, 0);
+  const tax = Number(sale.tax);
+  const total = Number(sale.total);
+
   const filePath = await generateInvoicePdf({
     invoiceId: sale.id,
     cafeName: user?.name ?? "سرو",
@@ -47,7 +51,9 @@ export async function GET(request: Request) {
       quantity: item.qty,
       price: Number(item.price)
     })),
-    total: Number(sale.total)
+    subtotal,
+    tax,
+    total
   });
 
   const relativePath = filePath.replace(process.cwd() + "/public", "");

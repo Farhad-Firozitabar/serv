@@ -68,6 +68,8 @@ export default async function InvoicePage({ params }: { params: { invoiceId: str
               quantity: item.qty,
               price: Number(item.price)
             }))}
+            subtotal={Number(sale.total) - Number(sale.tax)}
+            tax={Number(sale.tax)}
             total={Number(sale.total)}
             phone={sale.phone}
             cafeName={cafeProfile?.name || undefined}
@@ -108,9 +110,21 @@ export default async function InvoicePage({ params }: { params: { invoiceId: str
             ))}
           </tbody>
           <tfoot>
+            <tr className="border-t border-slate-200">
+              <td colSpan={3} className="py-2 text-left text-sm font-semibold">
+                جمع کل:
+              </td>
+              <td className="py-2 text-left text-sm font-semibold">{formatCurrency(Number(sale.total) - Number(sale.tax))}</td>
+            </tr>
+            <tr className="border-t border-slate-200">
+              <td colSpan={3} className="py-2 text-left text-sm font-semibold">
+                مالیات (۹٪):
+              </td>
+              <td className="py-2 text-left text-sm font-semibold">{formatCurrency(Number(sale.tax))}</td>
+            </tr>
             <tr className="border-t-2 border-slate-200 text-lg font-bold">
               <td colSpan={3} className="py-3 text-left">
-                جمع کل:
+                مبلغ قابل پرداخت:
               </td>
               <td className="py-3 text-left">{formatCurrency(Number(sale.total))}</td>
             </tr>

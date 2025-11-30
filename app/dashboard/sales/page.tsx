@@ -31,6 +31,7 @@ export default async function SalesPage() {
   const serializedSales = sales.map((sale) => ({
     ...sale,
     total: Number(sale.total),
+    tax: Number(sale.tax),
     items: sale.items.map((item) => ({
       ...item,
       price: Number(item.price),

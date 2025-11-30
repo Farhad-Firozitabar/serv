@@ -1,7 +1,20 @@
 "use client";
 
-import { useRef } from "react";
+import { useRef, useMemo } from "react";
 import { formatCurrency } from "@/lib/formatters";
+
+const beautifulMessages = [
+  "امیدواریم لحظات خوشی را در کنار ما تجربه کرده باشید",
+  "از حضور گرم شما سپاسگزاریم",
+  "امیدواریم روز خوبی داشته باشید",
+  "خوشحالیم که میزبان شما بودیم",
+  "امیدواریم دوباره شما را ببینیم",
+  "از انتخاب شما متشکریم",
+  "امیدواریم از خدمات ما راضی بوده باشید",
+  "خوشحالیم که در کنار شما بودیم",
+  "امیدواریم لحظات شیرینی را با ما گذرانده باشید",
+  "از اعتماد شما به ما سپاسگزاریم"
+];
 
 interface ReceiptItem {
   name: string;
@@ -12,6 +25,8 @@ interface ReceiptItem {
 interface ReceiptPrintProps {
   invoiceId: string;
   items: ReceiptItem[];
+  subtotal?: number;
+  tax?: number;
   total: number;
   phone?: string | null;
   cafeName?: string;
@@ -23,11 +38,16 @@ interface ReceiptPrintProps {
 export default function ReceiptPrint({
   invoiceId,
   items,
+  subtotal,
+  tax,
   total,
   phone,
   cafeName = "سرو"
 }: ReceiptPrintProps) {
   const printRef = useRef<HTMLDivElement>(null);
+  const randomMessage = useMemo(() => {
+    return beautifulMessages[Math.floor(Math.random() * beautifulMessages.length)];
+  }, []);
 
   const handlePrint = () => {
     if (printRef.current) {
@@ -49,38 +69,41 @@ export default function ReceiptPrint({
                   font-family: 'Vazirmatn', 'Tahoma', sans-serif;
                   padding: 20px;
                   background: white;
-                  color: #1e293b;
+                  color: #000000;
                   line-height: 1.6;
+                  font-weight: bold;
                 }
                 .receipt {
                   max-width: 300px;
                   margin: 0 auto;
                   background: white;
-                  border: 2px solid #10b981;
+                  border: 2px solid #000000;
                   border-radius: 12px;
                   padding: 24px;
                   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
                 }
                 .header {
                   text-align: center;
-                  border-bottom: 2px solid #10b981;
+                  border-bottom: 2px solid #000000;
                   padding-bottom: 16px;
                   margin-bottom: 20px;
                 }
                 .header h1 {
                   font-size: 24px;
                   font-weight: 900;
-                  color: #10b981;
+                  color: #000000;
                   margin-bottom: 8px;
                 }
                 .header p {
                   font-size: 12px;
-                  color: #64748b;
+                  color: #000000;
+                  font-weight: bold;
                 }
                 .info {
                   margin-bottom: 20px;
                   font-size: 11px;
-                  color: #64748b;
+                  color: #000000;
+                  font-weight: bold;
                 }
                 .info-row {
                   display: flex;
@@ -94,35 +117,37 @@ export default function ReceiptPrint({
                   display: flex;
                   justify-content: space-between;
                   padding: 8px 0;
-                  border-bottom: 1px dotted #e2e8f0;
+                  border-bottom: 1px dotted #000000;
                 }
                 .item-name {
                   flex: 1;
-                  font-weight: 600;
-                  color: #1e293b;
+                  font-weight: bold;
+                  color: #000000;
                 }
                 .item-details {
                   text-align: left;
                   font-size: 11px;
-                  color: #64748b;
+                  color: #000000;
+                  font-weight: bold;
                 }
                 .total {
-                  border-top: 2px solid #10b981;
+                  border-top: 2px solid #000000;
                   padding-top: 12px;
                   margin-top: 12px;
                   display: flex;
                   justify-content: space-between;
                   font-size: 18px;
                   font-weight: 900;
-                  color: #10b981;
+                  color: #000000;
                 }
                 .footer {
                   text-align: center;
                   margin-top: 24px;
                   padding-top: 16px;
-                  border-top: 1px solid #e2e8f0;
+                  border-top: 1px solid #000000;
                   font-size: 11px;
-                  color: #64748b;
+                  color: #000000;
+                  font-weight: bold;
                 }
                 @media print {
                   body {
@@ -196,12 +221,25 @@ export default function ReceiptPrint({
               </div>
             ))}
           </div>
+          {subtotal !== undefined && (
+            <div style={{ borderTop: "1px solid #000000", paddingTop: "8px", marginTop: "8px", display: "flex", justifyContent: "space-between", fontSize: "13px", fontWeight: "bold" }}>
+              <span>جمع کل:</span>
+              <span>{formatCurrency(subtotal)}</span>
+            </div>
+          )}
+          {tax !== undefined && (
+            <div style={{ display: "flex", justifyContent: "space-between", fontSize: "13px", fontWeight: "bold", marginTop: "4px" }}>
+              <span>مالیات (۹٪):</span>
+              <span>{formatCurrency(tax)}</span>
+            </div>
+          )}
           <div className="total">
-            <span>جمع کل:</span>
+            <span>مبلغ قابل پرداخت:</span>
             <span>{formatCurrency(total)}</span>
           </div>
           <div className="footer">
-            <p>با تشکر از خرید شما</p>
+            <p style={{ marginBottom: 8 }}>با تشکر از خرید شما</p>
+            <p style={{ marginBottom: 8, fontSize: 11 }}>{randomMessage}</p>
             <p style={{ marginTop: 8, fontSize: 10 }}>سرو - سیستم مدیریت کافه</p>
           </div>
         </div>

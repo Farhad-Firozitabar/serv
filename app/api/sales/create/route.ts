@@ -49,7 +49,9 @@ export async function POST(request: Request) {
     };
   });
 
-  const total = saleItems.reduce((sum, item) => sum + Number(item.price) * item.qty, 0);
+  const subtotal = saleItems.reduce((sum, item) => sum + Number(item.price) * item.qty, 0);
+  const tax = subtotal * 0.09; // 9% tax
+  const total = subtotal + tax;
 
   // Normalize phone number if provided
   let normalizedPhone: string | null = null;
@@ -69,6 +71,7 @@ export async function POST(request: Request) {
     data: {
       userId: session.userId,
       total,
+      tax,
       phone: normalizedPhone,
       paymentMethod: paymentMethod || "POS",
       items: { create: saleItems }
@@ -86,6 +89,7 @@ export async function POST(request: Request) {
   const serializedSale = {
     ...sale,
     total: Number(sale.total),
+    tax: Number(sale.tax),
     items: sale.items.map((item) => ({
       ...item,
       price: Number(item.price),
@@ -108,6 +112,8 @@ export async function POST(request: Request) {
         quantity: item.qty,
         price: Number(item.price)
       })),
+      subtotal,
+      tax,
       total,
       phone: normalizedPhone || undefined
     });

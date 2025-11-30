@@ -65,6 +65,7 @@ interface EnrichedSale {
   phone: string | null;
   paymentMethod: string;
   revenue: number;
+  tax: number;
   expense: number;
   profit: number;
   items: SaleItemWithCost[];
@@ -77,6 +78,7 @@ interface PeriodSegment {
   end: Date;
   period: Period;
   revenue: number;
+  tax: number;
   expense: number;
   profit: number;
   orders: number;
@@ -87,6 +89,7 @@ interface TimeframeReport {
   segments: PeriodSegment[];
   totals: {
     revenue: number;
+    tax: number;
     expense: number;
     profit: number;
     orders: number;
@@ -195,6 +198,7 @@ export default async function AccountingPage({ searchParams = {} }: AccountingPa
       };
     });
     const revenue = Number(sale.total);
+    const tax = Number(sale.tax);
     const expense = items.reduce((sum, item) => sum + item.cost * item.qty, 0);
     return {
       id: sale.id,
@@ -202,6 +206,7 @@ export default async function AccountingPage({ searchParams = {} }: AccountingPa
       phone: sale.phone,
       paymentMethod: sale.paymentMethod,
       revenue,
+      tax,
       expense,
       profit: revenue - expense,
       items
@@ -214,6 +219,7 @@ export default async function AccountingPage({ searchParams = {} }: AccountingPa
     : enrichedSales;
 
   const totalRevenue = filteredSales.reduce((sum, sale) => sum + sale.revenue, 0);
+  const totalTax = filteredSales.reduce((sum, sale) => sum + sale.tax, 0);
   const totalExpense = filteredSales.reduce((sum, sale) => sum + sale.expense, 0);
   const totalProfit = totalRevenue - totalExpense;
   const averageProfit = filteredSales.length ? totalProfit / filteredSales.length : 0;
@@ -289,8 +295,13 @@ export default async function AccountingPage({ searchParams = {} }: AccountingPa
 
       <PaymentMethodFilter />
 
-      <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+      <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-5">
         <StatCard label="درآمد کل" helper={`${formatCount(filteredSales.length)} فاکتور ثبت شده`} value={formatCurrency(totalRevenue)} />
+        <StatCard
+          label="مالیات دریافت شده"
+          helper="جمع مالیات ۹٪ از فاکتورها"
+          value={formatCurrency(totalTax)}
+        />
         <StatCard
           label="هزینه کالا"
           helper="جمع هزینه منوی فروخته‌شده"
@@ -327,6 +338,7 @@ export default async function AccountingPage({ searchParams = {} }: AccountingPa
             </div>
             <div className="flex flex-wrap gap-3 text-xs text-slate-600">
               <p>درآمد: <span className="font-semibold text-slate-900">{formatCurrency(timeframeReport.totals.revenue)}</span></p>
+              <p>مالیات: <span className="font-semibold text-slate-900">{formatCurrency(timeframeReport.totals.tax)}</span></p>
               <p>هزینه: <span className="font-semibold text-slate-900">{formatCurrency(timeframeReport.totals.expense)}</span></p>
               <p>سود: <span className={`font-semibold ${timeframeReport.totals.profit >= 0 ? "text-emerald-700" : "text-rose-700"}`}>{formatCurrency(timeframeReport.totals.profit)}</span></p>
               <p>تعداد فاکتور: <span className="font-semibold text-slate-900">{formatCount(timeframeReport.totals.orders)}</span></p>
@@ -354,6 +366,7 @@ export default async function AccountingPage({ searchParams = {} }: AccountingPa
                     <p className="text-sm font-semibold">{segment.label}</p>
                     <div className="mt-2 space-y-1">
                       <p>درآمد: <span className="font-semibold text-slate-900">{formatCurrency(segment.revenue)}</span></p>
+                      <p>مالیات: <span className="font-semibold text-slate-900">{formatCurrency(segment.tax)}</span></p>
                       <p>هزینه: <span className="font-semibold text-slate-900">{formatCurrency(segment.expense)}</span></p>
                       <p>
                         سود:{" "}
@@ -380,6 +393,7 @@ export default async function AccountingPage({ searchParams = {} }: AccountingPa
               </div>
               <div className="flex flex-wrap gap-3 text-xs text-slate-600">
                 <p>درآمد: <span className="font-semibold text-slate-900">{formatCurrency(segmentRevenue)}</span></p>
+                <p>مالیات: <span className="font-semibold text-slate-900">{formatCurrency(segmentSales.reduce((sum, sale) => sum + sale.tax, 0))}</span></p>
                 <p>هزینه: <span className="font-semibold text-slate-900">{formatCurrency(segmentExpense)}</span></p>
                 <p>سود: <span className={`font-semibold ${segmentProfit >= 0 ? "text-emerald-700" : "text-rose-700"}`}>{formatCurrency(segmentProfit)}</span></p>
                 <p>حاشیه سود: <span className="font-semibold text-slate-900">{formatPercent(segmentMargin)}</span></p>
@@ -464,10 +478,11 @@ export default async function AccountingPage({ searchParams = {} }: AccountingPa
           <div className="overflow-x-auto">
             <table className="min-w-full divide-y divide-slate-100 text-sm">
               <thead className="text-xs font-semibold uppercase tracking-wide text-slate-500">
-                <tr>
+                  <tr>
                   <th className="px-4 py-3 text-right">جزئیات فاکتور</th>
                   <th className="px-4 py-3 text-right">روش پرداخت</th>
                   <th className="px-4 py-3 text-right">درآمد</th>
+                  <th className="px-4 py-3 text-right">مالیات</th>
                   <th className="px-4 py-3 text-right">هزینه</th>
                   <th className="px-4 py-3 text-right">سود/زیان</th>
                 </tr>
@@ -499,6 +514,10 @@ export default async function AccountingPage({ searchParams = {} }: AccountingPa
                     <td className="px-4 py-4">
                       <p className="font-semibold text-slate-900">{formatCurrency(sale.revenue)}</p>
                       <p className="text-xs text-slate-500">{formatCount(sale.items.length)} آیتم</p>
+                    </td>
+                    <td className="px-4 py-4">
+                      <p className="font-semibold text-slate-900">{formatCurrency(sale.tax)}</p>
+                      <p className="text-xs text-slate-500">مالیات ۹٪</p>
                     </td>
                     <td className="px-4 py-4">
                       <p className="font-semibold text-slate-900">{formatCurrency(sale.expense)}</p>
@@ -603,12 +622,13 @@ function buildTimeframeReport(sales: EnrichedSale[], option: TimeframeOption): T
   const totals = segments.reduce(
     (acc, segment) => {
       acc.revenue += segment.revenue;
+      acc.tax += segment.tax;
       acc.expense += segment.expense;
       acc.profit += segment.profit;
       acc.orders += segment.orders;
       return acc;
     },
-    { revenue: 0, expense: 0, profit: 0, orders: 0 }
+    { revenue: 0, tax: 0, expense: 0, profit: 0, orders: 0 }
   );
   const margin = totals.revenue > 0 ? (totals.profit / totals.revenue) * 100 : null;
   return { option, segments, totals, margin };
@@ -647,6 +667,7 @@ function buildPeriodSegments(sales: EnrichedSale[], option: TimeframeOption): Pe
   return descriptors.map(({ start, end }) => {
     const periodSales = sales.filter((sale) => sale.createdAt >= start && sale.createdAt <= end);
     const revenue = periodSales.reduce((sum, sale) => sum + sale.revenue, 0);
+    const tax = periodSales.reduce((sum, sale) => sum + sale.tax, 0);
     const expense = periodSales.reduce((sum, sale) => sum + sale.expense, 0);
     const profit = revenue - expense;
     const orders = periodSales.length;
@@ -658,6 +679,7 @@ function buildPeriodSegments(sales: EnrichedSale[], option: TimeframeOption): Pe
       end,
       period: option.period,
       revenue,
+      tax,
       expense,
       profit,
       orders

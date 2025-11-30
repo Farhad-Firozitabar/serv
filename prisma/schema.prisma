@@ -46,6 +46,7 @@ model Sale {
   id            String        @id @default(cuid())
   userId        String
   total         Decimal       @db.Decimal(10, 2)
+  tax           Decimal       @db.Decimal(10, 2) @default(0)
   phone         String?
   paymentMethod PaymentMethod @default(POS)
   createdAt     DateTime      @default(now())

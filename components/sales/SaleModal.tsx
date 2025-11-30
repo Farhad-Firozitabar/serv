@@ -1,9 +1,22 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import Button from "@/components/ui/Button";
 import { formatCurrency } from "@/lib/formatters";
+
+const beautifulMessages = [
+  "امیدواریم لحظات خوشی را در کنار ما تجربه کرده باشید",
+  "از حضور گرم شما سپاسگزاریم",
+  "امیدواریم روز خوبی داشته باشید",
+  "خوشحالیم که میزبان شما بودیم",
+  "امیدواریم دوباره شما را ببینیم",
+  "از انتخاب شما متشکریم",
+  "امیدواریم از خدمات ما راضی بوده باشید",
+  "خوشحالیم که در کنار شما بودیم",
+  "امیدواریم لحظات شیرینی را با ما گذرانده باشید",
+  "از اعتماد شما به ما سپاسگزاریم"
+];
 
 interface SaleItem {
   id: string;
@@ -18,6 +31,7 @@ interface SaleModalProps {
   sale: {
     id: string;
     total: number;
+    tax?: number;
     phone: string | null;
     createdAt: Date | string;
     items: SaleItem[];
@@ -30,6 +44,9 @@ interface SaleModalProps {
  */
 export default function SaleModal({ sale, onClose }: SaleModalProps) {
   const router = useRouter();
+  const randomMessage = useMemo(() => {
+    return beautifulMessages[Math.floor(Math.random() * beautifulMessages.length)];
+  }, []);
 
   useEffect(() => {
     // Prevent body scroll when modal is open
@@ -54,34 +71,36 @@ export default function SaleModal({ sale, onClose }: SaleModalProps) {
                 font-family: 'Vazirmatn', 'Tahoma', sans-serif;
                 padding: 20px;
                 background: white;
-                color: #1e293b;
+                color: #000000;
                 line-height: 1.6;
+                font-weight: bold;
               }
               .receipt {
                 max-width: 300px;
                 margin: 0 auto;
                 background: white;
-                border: 2px solid #10b981;
+                border: 2px solid #000000;
                 border-radius: 12px;
                 padding: 24px;
                 box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
               }
               .header {
                 text-align: center;
-                border-bottom: 2px solid #10b981;
+                border-bottom: 2px solid #000000;
                 padding-bottom: 16px;
                 margin-bottom: 20px;
               }
               .header h1 {
                 font-size: 24px;
                 font-weight: 900;
-                color: #10b981;
+                color: #000000;
                 margin-bottom: 8px;
               }
               .info {
                 margin-bottom: 20px;
                 font-size: 11px;
-                color: #64748b;
+                color: #000000;
+                font-weight: bold;
               }
               .info-row {
                 display: flex;
@@ -95,35 +114,37 @@ export default function SaleModal({ sale, onClose }: SaleModalProps) {
                 display: flex;
                 justify-content: space-between;
                 padding: 8px 0;
-                border-bottom: 1px dotted #e2e8f0;
+                border-bottom: 1px dotted #000000;
               }
               .item-name {
                 flex: 1;
-                font-weight: 600;
-                color: #1e293b;
+                font-weight: bold;
+                color: #000000;
               }
               .item-details {
                 text-align: left;
                 font-size: 11px;
-                color: #64748b;
+                color: #000000;
+                font-weight: bold;
               }
               .total {
-                border-top: 2px solid #10b981;
+                border-top: 2px solid #000000;
                 padding-top: 12px;
                 margin-top: 12px;
                 display: flex;
                 justify-content: space-between;
                 font-size: 18px;
                 font-weight: 900;
-                color: #10b981;
+                color: #000000;
               }
               .footer {
                 text-align: center;
                 margin-top: 24px;
                 padding-top: 16px;
-                border-top: 1px solid #e2e8f0;
+                border-top: 1px solid #000000;
                 font-size: 11px;
-                color: #64748b;
+                color: #000000;
+                font-weight: bold;
               }
               @media print {
                 body { padding: 0; }
@@ -168,12 +189,23 @@ export default function SaleModal({ sale, onClose }: SaleModalProps) {
                   </div>
                 `).join("")}
               </div>
-              <div class="total">
+              ${sale.tax !== undefined ? `
+              <div style="border-top: 1px solid #000000; padding-top: 8px; margin-top: 8px; display: flex; justify-content: space-between; font-size: 13px; font-weight: bold;">
                 <span>جمع کل:</span>
+                <span>${formatCurrency(sale.total - sale.tax)}</span>
+              </div>
+              <div style="display: flex; justify-content: space-between; font-size: 13px; font-weight: bold; margin-top: 4px;">
+                <span>مالیات (۹٪):</span>
+                <span>${formatCurrency(sale.tax)}</span>
+              </div>
+              ` : ""}
+              <div class="total">
+                <span>مبلغ قابل پرداخت:</span>
                 <span>${formatCurrency(sale.total)}</span>
               </div>
               <div class="footer">
-                <p>با تشکر از خرید شما</p>
+                <p style="margin-bottom: 8px;">با تشکر از خرید شما</p>
+                <p style="margin-bottom: 8px; font-size: 11px;">${randomMessage}</p>
                 <p style="margin-top: 8px; font-size: 10px;">سرو - سیستم مدیریت کافه</p>
               </div>
             </div>
@@ -223,9 +255,21 @@ export default function SaleModal({ sale, onClose }: SaleModalProps) {
             ))}
           </div>
 
-          <div className="mt-6 border-t border-slate-200 pt-4">
+          <div className="mt-6 border-t border-slate-200 pt-4 space-y-2">
+            {sale.tax !== undefined && (
+              <>
+                <div className="flex items-center justify-between text-sm font-semibold text-slate-700">
+                  <span>جمع کل:</span>
+                  <span>{formatCurrency(sale.total - sale.tax)}</span>
+                </div>
+                <div className="flex items-center justify-between text-sm font-semibold text-slate-700">
+                  <span>مالیات (۹٪):</span>
+                  <span>{formatCurrency(sale.tax)}</span>
+                </div>
+              </>
+            )}
             <div className="flex items-center justify-between text-xl font-bold text-slate-900">
-              <span>جمع کل:</span>
+              <span>مبلغ قابل پرداخت:</span>
               <span className="text-emerald-600">{formatCurrency(sale.total)}</span>
             </div>
           </div>
