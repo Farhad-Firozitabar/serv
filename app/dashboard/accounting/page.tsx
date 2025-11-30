@@ -220,27 +220,29 @@ export default async function AccountingPage({ searchParams = {} }: AccountingPa
   const profitMargin = totalRevenue > 0 ? (totalProfit / totalRevenue) * 100 : null;
 
   const positiveInventoryLogs = inventoryLogs.filter((log) => log.change > 0);
-  const inventoryAccountingReport: InventoryAccountingRow[] = Object.values(
-    positiveInventoryLogs.reduce((acc, log) => {
-      if (!acc[log.productId]) {
-        acc[log.productId] = {
-          productId: log.productId,
-          productName: log.product.name,
-          stockUnit: log.product.stockUnit,
-          totalQty: 0,
-          totalAmount: 0,
-          lastPurchase: log.createdAt,
-          entries: 0
-        };
-      }
-      acc[log.productId].totalQty += log.change;
-      acc[log.productId].totalAmount += Number(log.product.price) * log.change;
-      acc[log.productId].entries += 1;
-      if (log.createdAt > acc[log.productId].lastPurchase) {
-        acc[log.productId].lastPurchase = log.createdAt;
-      }
-      return acc;
-    }, {} as Record<string, InventoryAccountingRow>)
+  const inventoryAccountingReport: InventoryAccountingRow[] = (
+    Object.values(
+      positiveInventoryLogs.reduce((acc, log) => {
+        if (!acc[log.productId]) {
+          acc[log.productId] = {
+            productId: log.productId,
+            productName: log.product.name,
+            stockUnit: log.product.stockUnit,
+            totalQty: 0,
+            totalAmount: 0,
+            lastPurchase: log.createdAt,
+            entries: 0
+          };
+        }
+        acc[log.productId].totalQty += log.change;
+        acc[log.productId].totalAmount += Number(log.product.price) * log.change;
+        acc[log.productId].entries += 1;
+        if (log.createdAt > acc[log.productId].lastPurchase) {
+          acc[log.productId].lastPurchase = log.createdAt;
+        }
+        return acc;
+      }, {} as Record<string, InventoryAccountingRow>)
+    ) as InventoryAccountingRow[]
   ).sort((a, b) => b.totalAmount - a.totalAmount);
   const totalMaterialsSpend = inventoryAccountingReport.reduce((sum, row) => sum + row.totalAmount, 0);
   const totalMaterialsEntries = positiveInventoryLogs.length;
