@@ -1,16 +1,24 @@
 "use client";
 
 import Button from "@/components/ui/Button";
-import type { Prisma } from "@prisma/client";
-
-type Printer = Prisma.PrinterGetPayload<{}>;
-type PrintJob = Prisma.PrintJobGetPayload<{}>;
 
 /**
  * Card component summarising a printer and its latest job status.
  */
+interface PrintJob {
+  status: "PENDING" | "SENT" | "FAILED";
+}
+
+interface Printer {
+  id: string;
+  name: string;
+  address: string;
+  createdAt: Date | string;
+  jobs: PrintJob[];
+}
+
 export interface PrinterCardProps {
-  printer: Printer & { jobs: PrintJob[] };
+  printer: Printer;
 }
 
 export default function PrinterCard({ printer }: PrinterCardProps) {
