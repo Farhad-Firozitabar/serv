@@ -50,7 +50,7 @@ export async function POST(request: Request) {
   });
 
   const subtotal = saleItems.reduce((sum, item) => sum + Number(item.price) * item.qty, 0);
-  const tax = subtotal * 0.09; // 9% tax
+  const tax = subtotal * 0.10; // 10% tax
   const total = subtotal + tax;
 
   // Normalize phone number if provided

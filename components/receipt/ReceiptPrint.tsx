@@ -1,7 +1,20 @@
 "use client";
 
 import { useRef, useMemo } from "react";
-import { formatCurrency } from "@/lib/formatters";
+
+const persianCurrencyFormatter = new Intl.NumberFormat("fa-IR", {
+  maximumFractionDigits: 0
+});
+
+/**
+ * Formats numeric values as Persian currency (ریال) for receipts.
+ */
+function formatCurrencyRial(value: number) {
+  if (!Number.isFinite(value)) {
+    return "۰ ریال";
+  }
+  return `${persianCurrencyFormatter.format(Math.round(Number(value)))} ریال`;
+}
 
 const beautifulMessages = [
   "امیدواریم لحظات خوشی را در کنار ما تجربه کرده باشید",
@@ -213,9 +226,9 @@ export default function ReceiptPrint({
               <div key={index} className="item">
                 <span className="item-name">{item.name}</span>
                 <div className="item-details">
-                  <div>{item.quantity} × {formatCurrency(item.price)}</div>
+                  <div>{item.quantity} × {formatCurrencyRial(item.price)}</div>
                   <div style={{ fontWeight: 600, marginTop: 2 }}>
-                    {formatCurrency(item.price * item.quantity)}
+                    {formatCurrencyRial(item.price * item.quantity)}
                   </div>
                 </div>
               </div>
@@ -224,18 +237,18 @@ export default function ReceiptPrint({
           {subtotal !== undefined && (
             <div style={{ borderTop: "1px solid #000000", paddingTop: "8px", marginTop: "8px", display: "flex", justifyContent: "space-between", fontSize: "13px", fontWeight: "bold" }}>
               <span>جمع کل:</span>
-              <span>{formatCurrency(subtotal)}</span>
+              <span>{formatCurrencyRial(subtotal)}</span>
             </div>
           )}
           {tax !== undefined && (
             <div style={{ display: "flex", justifyContent: "space-between", fontSize: "13px", fontWeight: "bold", marginTop: "4px" }}>
-              <span>مالیات (۹٪):</span>
-              <span>{formatCurrency(tax)}</span>
+              <span>مالیات (۱۰٪):</span>
+              <span>{formatCurrencyRial(tax)}</span>
             </div>
           )}
           <div className="total">
             <span>مبلغ قابل پرداخت:</span>
-            <span>{formatCurrency(total)}</span>
+            <span>{formatCurrencyRial(total)}</span>
           </div>
           <div className="footer">
             <p style={{ marginBottom: 8 }}>با تشکر از خرید شما</p>

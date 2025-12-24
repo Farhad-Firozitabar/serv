@@ -3,11 +3,11 @@ const persianCurrencyFormatter = new Intl.NumberFormat("fa-IR", {
 });
 
 /**
- * Formats numeric values as Persian currency (تومان) without decimals.
+ * Formats numeric values as Persian currency (ریال) without decimals.
  */
 export function formatCurrency(value: number) {
   if (!Number.isFinite(value)) {
-    return "۰ تومان";
+    return "۰ ریال";
   }
-  return `${persianCurrencyFormatter.format(Math.round(Number(value)))} تومان`;
+  return `${persianCurrencyFormatter.format(Math.round(Number(value)))} ریال`;
 }

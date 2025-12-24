@@ -299,7 +299,7 @@ export default async function AccountingPage({ searchParams = {} }: AccountingPa
         <StatCard label="درآمد کل" helper={`${formatCount(filteredSales.length)} فاکتور ثبت شده`} value={formatCurrency(totalRevenue)} />
         <StatCard
           label="مالیات دریافت شده"
-          helper="جمع مالیات ۹٪ از فاکتورها"
+          helper="جمع مالیات ۱۰٪ از فاکتورها"
           value={formatCurrency(totalTax)}
         />
         <StatCard
@@ -517,7 +517,7 @@ export default async function AccountingPage({ searchParams = {} }: AccountingPa
                     </td>
                     <td className="px-4 py-4">
                       <p className="font-semibold text-slate-900">{formatCurrency(sale.tax)}</p>
-                      <p className="text-xs text-slate-500">مالیات ۹٪</p>
+                      <p className="text-xs text-slate-500">مالیات ۱۰٪</p>
                     </td>
                     <td className="px-4 py-4">
                       <p className="font-semibold text-slate-900">{formatCurrency(sale.expense)}</p>

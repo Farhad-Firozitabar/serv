@@ -118,7 +118,7 @@ export default async function InvoicePage({ params }: { params: { invoiceId: str
             </tr>
             <tr className="border-t border-slate-200">
               <td colSpan={3} className="py-2 text-left text-sm font-semibold">
-                مالیات (۹٪):
+                مالیات (۱۰٪):
               </td>
               <td className="py-2 text-left text-sm font-semibold">{formatCurrency(Number(sale.tax))}</td>
             </tr>

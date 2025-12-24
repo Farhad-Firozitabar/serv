@@ -195,7 +195,7 @@ export default function SaleModal({ sale, onClose }: SaleModalProps) {
                 <span>${formatCurrency(sale.total - sale.tax)}</span>
               </div>
               <div style="display: flex; justify-content: space-between; font-size: 13px; font-weight: bold; margin-top: 4px;">
-                <span>مالیات (۹٪):</span>
+                <span>مالیات (۱۰٪):</span>
                 <span>${formatCurrency(sale.tax)}</span>
               </div>
               ` : ""}
@@ -263,7 +263,7 @@ export default function SaleModal({ sale, onClose }: SaleModalProps) {
                   <span>{formatCurrency(sale.total - sale.tax)}</span>
                 </div>
                 <div className="flex items-center justify-between text-sm font-semibold text-slate-700">
-                  <span>مالیات (۹٪):</span>
+                  <span>مالیات (۱۰٪):</span>
                   <span>{formatCurrency(sale.tax)}</span>
                 </div>
               </>

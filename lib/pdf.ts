@@ -154,7 +154,7 @@ export async function generateInvoicePdf(details: InvoiceDetails) {
 
   // Tax (if provided)
   if (details.tax !== undefined) {
-    const taxText = `مالیات (۹٪): ${Math.round(details.tax).toLocaleString("fa-IR")} ریال`;
+    const taxText = `مالیات (۱۰٪): ${Math.round(details.tax).toLocaleString("fa-IR")} ریال`;
     const taxWidth = font.widthOfTextAtSize(taxText, 11);
     page.drawText(taxText, {
       x: width - 50 - taxWidth,
